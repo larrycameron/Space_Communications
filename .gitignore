@@ -1,0 +1,30 @@
+# Compiled artifacts
+Builds/
+build/
+Backups/
+Reproduced_Phase13B_Results/
+*.o
+*.obj
+*.exe
+*.out
+space_communications
+space_comms
+*_test
+mc4_phase*
+phase11*
+phase12*
+phase13*
+rq4_phase3
+rq4_pilot100
+rq4_production_input
+
+# Generated packet-level files (too large for ordinary GitHub storage)
+Monte_Carlo_Experiments/Phase13_RQ4_Production_Results/Phase13_RQ4_Production_Packet_Audit.csv
+Monte_Carlo_Experiments/Phase12H_Results/Phase12H_Matched_Packet_Audit.csv
+Monte_Carlo_Experiments/Monte_Carlo_Experiment 4/Phase_13_Production_Input/
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
