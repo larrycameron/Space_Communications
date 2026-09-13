@@ -20,15 +20,16 @@ The Phase 13 production experiment is the authoritative implementation for the j
 
 ## RQ4 robustness analyses
 
-Three pre-specified robustness analyses extend the frozen Phase 13 routing-policy comparison:
+Three pre-specified robustness analyses and one mechanism-driven TTL sensitivity analysis extend the frozen Phase 13 routing-policy comparison:
 
 - **PAT sensitivity:** 30, 60, and 120 seconds per hop.
 - **No Relay 2:** repeats the pointing-loss and combined-stress comparisons with the dominant L2-proxy relay unavailable.
 - **Pointing-loss sweep:** direct-route signal factors of 1.00, 0.75, 0.50, and 0.25.
-
+- **TTL sensitivity:** packet lifetimes of 750, 1,500, and 3,000 seconds under pointing-loss and combined-stress conditions.
+  
 All robustness analyses retain the original 1,000 production seeds, 200 packets per world, matched common random numbers, four frozen routing policies, optical model, packet outcome order, and world-level statistical unit. Reliability remains the primary outcome.
 
-The 60-second PAT condition reproduced all 8,000 applicable Phase 13 trial-summary rows exactly. All three robustness datasets passed checks for packet accounting, unique experimental cells, valid probabilities, maximum-score route selection, matched random inputs, and independently recomputed paired statistics.
+The 60-second PAT condition reproduced all 8,000 applicable Phase 13 trial-summary rows exactly. The 1,500-second TTL condition independently reproduced all 8,000 applicable pointing-loss and combined-stress rows exactly. All four robustness datasets passed checks for packet accounting, unique experimental cells, valid probabilities, maximum-score route selection, matched random inputs, factor isolation, and independently recomputed paired statistics.
 
 Principal robustness findings:
 
@@ -36,6 +37,11 @@ Principal robustness findings:
 - With Relay 2 unavailable, B4 retained gains of 21.37 points under pointing loss and 30.65 points under combined stress.
 - In the pointing-loss sweep, B4 gained 15.39 points at a 0.50 signal factor and produced no change at 0.75 or 1.00 because it retained the direct route.
 - Null, adverse, and favorable results are retained under the prespecified reporting rules.
+- TTL sensitivity established a deadline-dependent boundary. At 750 seconds, B4 produced no B1 reliability change under pointing loss and a −0.11-point change under combined stress. At 1,500 seconds, B4 exceeded B1 by
+  40.66 and 49.92 points, respectively. At 3,000 seconds, those gains were 42.08 and 51.33 points.
+- Relative to B3, B4 gained approximately 16.0 reliability points at the frozen 1,500-second TTL by preventing approximately 33 expirations per 200-packet world. At 3,000 seconds, expiry disappeared and B3 was
+  approximately 0.4–0.5 points more reliable, although B4 retained substantially lower conditional latency.
+- These results identify B4 as a deadline-sensitive tradeoff policy rather than a universally superior reliability policy.
 
 Source code, manifests, route scores, trial summaries, paired comparisons, route-selection summaries, validation reports, and checksums are available under [`Monte_Carlo_Experiments/Robustness`](Monte_Carlo_Experiments/Robustness).
 
@@ -49,6 +55,7 @@ mkdir -p Builds
 g++ -std=c++17 -O2 -Wall -Wextra -pedantic -I. -I/usr/include/eigen3 \
   Monte_Carlo_Experiments/Monte_Carlo_Experiment_4_RQ4_Production_Input_Generator.cpp \
   Interstellar_Communications_Network.cpp Kepler_Physics_Engine.cpp \
+  Statistical_Data.cpp \
   -o Builds/rq4_production_input
 
 g++ -std=c++17 -O2 -Wall -Wextra -pedantic \
@@ -104,4 +111,4 @@ The complete Phase 13 packet audit is approximately 213 MB in the supplied proje
 
 ## Repository status
 
-This public-ready copy removes compiled executables and machine-specific absolute paths. A license and archival DOI should be added before the repository is cited as the permanent journal reproducibility record.
+Release `v1.0.0` is permanently archived at [Zenodo DOI 10.5281/zenodo.22728487](https://doi.org/10.5281/zenodo.22728487). The expanded robustness package will be archived as release `v1.1.0` after the revised manuscript and repository documentation are frozen.
