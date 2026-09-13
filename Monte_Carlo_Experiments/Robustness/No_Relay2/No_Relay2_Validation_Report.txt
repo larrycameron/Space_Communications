@@ -1,0 +1,5 @@
+PASS
+Trial summary rows: 8000
+Route score rows: 32000
+Phase 13 replication: not requested
+Checks: unique keys, accounting, probability-derived reliability, delivered bits, one available maximum-score route, PAT leakage, paired statistics

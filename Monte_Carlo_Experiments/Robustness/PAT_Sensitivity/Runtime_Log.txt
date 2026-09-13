@@ -1,0 +1,2 @@
+pat runtime_seconds=0 worlds=20
+pat runtime_seconds=4 worlds=1000

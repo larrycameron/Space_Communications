@@ -1,0 +1,1 @@
+no-relay2 runtime_seconds=1 worlds=1000

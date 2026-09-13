@@ -1,0 +1,1 @@
+pointing runtime_seconds=3 worlds=1000

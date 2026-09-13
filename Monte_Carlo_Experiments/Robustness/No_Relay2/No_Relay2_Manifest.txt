@@ -1,0 +1,9 @@
+RQ4 robustness family: no-relay2
+Worlds: 1000
+Packets per world: 200
+Policies: B1, B2, B3, B4
+Cells: 2
+Frozen mathematics: Phase 13 optical, routing, event-order, and CRN equations
+Packet audit output: omitted by design; regenerable from frozen inputs
+NoRelay2__Direct_Pointing_25pct_Power | Relay2_Enabled=0 | base_stream=Direct_Pointing_25pct_Power
+NoRelay2__Direct_Combined_25pctPower_BG16 | Relay2_Enabled=0 | base_stream=Direct_Combined_25pctPower_BG16

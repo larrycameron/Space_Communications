@@ -1,0 +1,13 @@
+RQ4 robustness family: pat
+Worlds: 1000
+Packets per world: 200
+Policies: B1, B2, B3, B4
+Cells: 6
+Frozen mathematics: Phase 13 optical, routing, event-order, and CRN equations
+Packet audit output: omitted by design; regenerable from frozen inputs
+PAT30__Direct_Pointing_25pct_Power | PAT_s_Per_Hop=30 | base_stream=Direct_Pointing_25pct_Power
+PAT30__Direct_Combined_25pctPower_BG16 | PAT_s_Per_Hop=30 | base_stream=Direct_Combined_25pctPower_BG16
+PAT60__Direct_Pointing_25pct_Power | PAT_s_Per_Hop=60 | base_stream=Direct_Pointing_25pct_Power
+PAT60__Direct_Combined_25pctPower_BG16 | PAT_s_Per_Hop=60 | base_stream=Direct_Combined_25pctPower_BG16
+PAT120__Direct_Pointing_25pct_Power | PAT_s_Per_Hop=120 | base_stream=Direct_Pointing_25pct_Power
+PAT120__Direct_Combined_25pctPower_BG16 | PAT_s_Per_Hop=120 | base_stream=Direct_Combined_25pctPower_BG16
