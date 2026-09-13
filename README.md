@@ -18,6 +18,27 @@ The Phase 13 production experiment is the authoritative implementation for the j
 - A POSIX-like shell such as Linux or WSL.
 - Eigen 3 is required by the production-input generator. On Ubuntu/WSL, install `libeigen3-dev`. The Phase 13 production and Phase 13B statistical programs use only the C++ standard library.
 
+## RQ4 robustness analyses
+
+Three pre-specified robustness analyses extend the frozen Phase 13 routing-policy comparison:
+
+- **PAT sensitivity:** 30, 60, and 120 seconds per hop.
+- **No Relay 2:** repeats the pointing-loss and combined-stress comparisons with the dominant L2-proxy relay unavailable.
+- **Pointing-loss sweep:** direct-route signal factors of 1.00, 0.75, 0.50, and 0.25.
+
+All robustness analyses retain the original 1,000 production seeds, 200 packets per world, matched common random numbers, four frozen routing policies, optical model, packet outcome order, and world-level statistical unit. Reliability remains the primary outcome.
+
+The 60-second PAT condition reproduced all 8,000 applicable Phase 13 trial-summary rows exactly. All three robustness datasets passed checks for packet accounting, unique experimental cells, valid probabilities, maximum-score route selection, matched random inputs, and independently recomputed paired statistics.
+
+Principal robustness findings:
+
+- Under pointing loss, the B4-minus-B1 reliability gain was 40.99 percentage points at 30-second PAT, 40.66 points at 60 seconds, and 27.19 points at 120 seconds.
+- With Relay 2 unavailable, B4 retained gains of 21.37 points under pointing loss and 30.65 points under combined stress.
+- In the pointing-loss sweep, B4 gained 15.39 points at a 0.50 signal factor and produced no change at 0.75 or 1.00 because it retained the direct route.
+- Null, adverse, and favorable results are retained under the prespecified reporting rules.
+
+Source code, manifests, route scores, trial summaries, paired comparisons, route-selection summaries, validation reports, and checksums are available under [`Monte_Carlo_Experiments/Robustness`](Monte_Carlo_Experiments/Robustness).
+
 ## Build
 
 Run these commands from the repository root:
