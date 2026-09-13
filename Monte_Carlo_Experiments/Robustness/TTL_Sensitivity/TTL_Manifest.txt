@@ -1,0 +1,13 @@
+RQ4 robustness family: ttl
+Worlds: 1000
+Packets per world: 200
+Policies: B1, B2, B3, B4
+Cells: 6
+Frozen mathematics: Phase 13 optical, routing, event-order, and CRN equations
+Packet audit output: omitted by design; regenerable from frozen inputs
+TTL750__Direct_Pointing_25pct_Power | TTL_s=750 | base_stream=Direct_Pointing_25pct_Power
+TTL750__Direct_Combined_25pctPower_BG16 | TTL_s=750 | base_stream=Direct_Combined_25pctPower_BG16
+TTL1500__Direct_Pointing_25pct_Power | TTL_s=1500 | base_stream=Direct_Pointing_25pct_Power
+TTL1500__Direct_Combined_25pctPower_BG16 | TTL_s=1500 | base_stream=Direct_Combined_25pctPower_BG16
+TTL3000__Direct_Pointing_25pct_Power | TTL_s=3000 | base_stream=Direct_Pointing_25pct_Power
+TTL3000__Direct_Combined_25pctPower_BG16 | TTL_s=3000 | base_stream=Direct_Combined_25pctPower_BG16

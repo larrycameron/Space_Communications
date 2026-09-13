@@ -60,11 +60,15 @@ def main():
         if len(selected)!=1:errors.append('selected count: '+str(k));continue
         available=[x for x in rows if x['Available']=='1'];mx=max(f(x['Policy_Score']) for x in available)
         if selected[0]['Available']!='1' or not math.isclose(f(selected[0]['Policy_Score']),mx,abs_tol=1e-14):errors.append('selected route is not available maximum: '+str(k))
-    # PAT leakage: physical inputs must be invariant across PAT values for each base route.
+    # Single-factor isolation: non-varied route inputs remain invariant.
     if s and s[0]['Factor_Name']=='PAT_s_Per_Hop':
         leak=defaultdict(set)
         for x in r:leak[(x['Base_Scenario'],x['Seed'],x['Policy'],x['Route_Name'])].add((x['Contact_Probability'],x['Optical_Success_Lower'],x['Propagation_s']))
         if any(len(v)!=1 for v in leak.values()):errors.append('PAT factor leakage into contact, optical, or propagation term')
+    if s and s[0]['Factor_Name']=='TTL_s':
+        leak=defaultdict(set)
+        for x in r:leak[(x['Base_Scenario'],x['Seed'],x['Policy'],x['Route_Name'])].add((x['Available'],x['Contact_Probability'],x['Optical_Success_Lower'],x['PAT_s'],x['Propagation_s'],x['Policy_Score'],x['Selected']))
+        if any(len(v)!=1 for v in leak.values()):errors.append('TTL factor leakage into availability, route inputs, scores, or selection')
     by=defaultdict(dict)
     for x in s:by[(x['Condition'],x['Seed'])][x['Policy']]=x
     comparisons=[]
@@ -83,20 +87,21 @@ def main():
             if len(b)>1:z={'Condition':condition,'Metric':'Conditional_Latency_s','Reference_Policy':ref,'Comparator_Policy':comp,'Excluded_Worlds':len(pairs)-len(eligible)};z.update(paired(b,q,False));comparisons.append(z)
     fields=['Condition','Metric','Reference_Policy','Comparator_Policy','Interpretation','Excluded_Worlds','N','Reference_Mean','Comparator_Mean','Mean_Paired_Difference','Median_Paired_Difference','SD_Paired_Difference','CI95_Lower','CI95_Upper','Cohens_Dz','Preferred_Wins','Preferred_Losses','Ties','Exact_Sign_Test_P_Value']
     prefix=Path(a.summary).name.replace('_Trial_Summary.csv','')
-    with open(out/f'{prefix}_Paired_Comparisons.csv','w',newline='') as fobj:w=csv.DictWriter(fobj,fields);w.writeheader();w.writerows(comparisons)
+    with open(out/f'{prefix}_Paired_Comparisons.csv','w',newline='') as fobj:w=csv.DictWriter(fobj,fields,lineterminator='\n');w.writeheader();w.writerows(comparisons)
     route_counts=Counter((x['Condition'],x['Policy'],x['Selected_Route']) for x in s);worlds=Counter((x['Condition'],x['Policy']) for x in s)
     with open(out/f'{prefix}_Route_Selection_Summary.csv','w',newline='') as fobj:
-        fields2=['Condition','Policy','Route','Selection_Count','Selection_Percentage'];w=csv.DictWriter(fobj,fields2);w.writeheader()
+        fields2=['Condition','Policy','Route','Selection_Count','Selection_Percentage'];w=csv.DictWriter(fobj,fields2,lineterminator='\n');w.writeheader()
         for c,p in sorted(worlds):
             for route in ['Direct_Earth_to_Mars','Earth_Relay0_Mars','Earth_Relay1_Mars','Earth_Relay2_Mars']:
                 n=route_counts[(c,p,route)];w.writerow({'Condition':c,'Policy':p,'Route':route,'Selection_Count':n,'Selection_Percentage':100*n/worlds[(c,p)]})
-    # Exact Phase 13 replication for PAT=60 on common seeds and scenarios.
+    # Exact Phase 13 replication for the frozen reference cell.
     replicated='not requested'
     if a.phase13_summary:
         old=read(a.phase13_summary);old={(x['Base_Scenario'] if 'Base_Scenario' in x else x['Scenario'],x['Seed'],x['Policy']):x for x in old};checked=0
         fields3=['Selected_Route','Generated','Delivered','Expired','Dropped','Contact_Failures','Optical_Failures','Reliability','Delivered_Bits','Mean_Delivered_Latency_s']
         for x in s:
-            if x['Factor_Name']!='PAT_s_Per_Hop' or not math.isclose(f(x['Factor_Value']),60.):continue
+            reference=(x['Factor_Name']=='PAT_s_Per_Hop' and math.isclose(f(x['Factor_Value']),60.)) or (x['Factor_Name']=='TTL_s' and math.isclose(f(x['Factor_Value']),1500.))
+            if not reference:continue
             y=old.get((x['Base_Scenario'],x['Seed'],x['Policy']))
             if y is None:errors.append('missing Phase 13 reference row');continue
             checked+=1
@@ -104,12 +109,13 @@ def main():
                 if field=='Mean_Delivered_Latency_s' or field=='Reliability':
                     if not math.isclose(f(x[field]),f(y[field]),rel_tol=0,abs_tol=1e-12):errors.append('Phase 13 mismatch '+field+str((x['Base_Scenario'],x['Seed'],x['Policy'])))
                 elif x[field]!=y[field]:errors.append('Phase 13 mismatch '+field+str((x['Base_Scenario'],x['Seed'],x['Policy'])))
-        replicated=f'{checked} PAT=60 rows checked exactly'
+        label='PAT=60' if s and s[0]['Factor_Name']=='PAT_s_Per_Hop' else 'TTL=1500'
+        replicated=f'{checked} {label} rows checked exactly'
     report=out/f'{prefix}_Validation_Report.txt'
     with open(report,'w') as fobj:
         fobj.write(('FAIL' if errors else 'PASS')+'\n')
         fobj.write(f'Trial summary rows: {len(s)}\nRoute score rows: {len(r)}\nPhase 13 replication: {replicated}\n')
-        fobj.write('Checks: unique keys, accounting, probability-derived reliability, delivered bits, one available maximum-score route, PAT leakage, paired statistics\n')
+        fobj.write('Checks: unique keys, accounting, probability-derived reliability, delivered bits, one available maximum-score route, factor isolation, paired statistics\n')
         for e in errors:fobj.write('ERROR: '+e+'\n')
     print(('FAIL' if errors else 'PASS')+f': {report}')
     if errors:raise SystemExit(1)

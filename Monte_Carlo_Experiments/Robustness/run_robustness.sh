@@ -28,6 +28,7 @@ if [[ ! -f "$packet_file" && ${#packet_candidates[@]} -eq 0 ]]; then
   g++ -std=c++17 -O2 -Wall -Wextra -pedantic -I"$repo_root" -I/usr/include/eigen3 \
     "$repo_root/Monte_Carlo_Experiments/Monte_Carlo_Experiment_4_RQ4_Production_Input_Generator.cpp" \
     "$repo_root/Interstellar_Communications_Network.cpp" "$repo_root/Kepler_Physics_Engine.cpp" \
+    "$repo_root/Statistical_Data.cpp" \
     -o "$build_dir/rq4_production_input"
   (cd "$repo_root" && "$build_dir/rq4_production_input")
 fi

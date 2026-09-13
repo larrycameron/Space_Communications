@@ -7,6 +7,9 @@ The pipeline changes only the declared factor in each family:
 - `PAT_Sensitivity`: 30, 60, and 120 seconds per hop;
 - `No_Relay2`: Relay 2 unavailable, with PAT fixed at 60 seconds per hop;
 - `Pointing_Loss_Sweep`: direct signal factors 1.00, 0.75, 0.50, and 0.25.
+- `TTL_Sensitivity`: packet lifetimes of 750, 1,500, and 3,000 seconds under pointing-loss and combined-stress conditions.
+
+The TTL family changes packet deadlines only. Route inputs, policy scores, route selections, physical probabilities, seeds, and common random numbers remain frozen. Its 1,500-second cell is an exact Phase 13 replication gate.
 
 Run the mandatory 20-world PAT gate first:
 
@@ -20,6 +23,18 @@ After inspecting the validation report and runtime log, run all three 1,000-worl
 
 ```bash
 bash Monte_Carlo_Experiments/Robustness/run_robustness.sh production
+```
+
+Run the mandatory 20-world TTL gate separately:
+
+```bash
+bash Monte_Carlo_Experiments/Robustness/run_ttl_sensitivity.sh debug
+```
+
+After confirming that `TTL_Sensitivity/TTL_Validation_Report.txt` begins with `PASS`, run the 1,000-world TTL campaign:
+
+```bash
+bash Monte_Carlo_Experiments/Robustness/run_ttl_sensitivity.sh production
 ```
 
 CSV outputs, manifests, validation reports, and runtime logs remain in their family-specific folders. Production mode does not create packet-level audit CSVs because those files would be very large; it validates packet accounting while outcomes are accumulated. Existing Phase 13 files are read-only inputs and are never overwritten.
